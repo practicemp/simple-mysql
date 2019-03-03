@@ -8,11 +8,14 @@ namespace PracticeMP\DB;
  * select语句以数组形式返回结果集
  * insert，update，dalete必须传入参数，返回受影响的行数
  * 使用形式：
- * $sql = 'insert into test(name,age) values(?,?)';参数位置以?代替，语句最后不要用分号，这是 prepare 的要求。
- * $arr = array($var1, $var2...);参数以引用传值形式构成数组
- * $sm = SimpleMysql::getInstance('localhost','root','','db', 3306,'utf8');如果省略参数，
- * 将传入默认参数
- * $result = $sm->query($sql, $arr,[ 'all' | 'row' ]); 最后的 all 或 row 只有在 select 查询时才有用。
+ * // 以单例模式获取实例。如果省略参数，将传入默认参数。
+ * $sm = SimpleMysql::getInstance('localhost','root','','test', 3306,'utf8');
+ * // 参数化查询 参数位置以?代替，语句最后不要用分号，这是 prepare 的要求。
+ * $sql = 'insert into test(name,age) values(?,?)';
+ * // 将参数构成数组形式
+ * $data = array($var1, $var2...);
+ * // 最后的 all 或 row 只有在 select 查询时才有用。
+ * $result = $sm->query($sql, $data,[ 'all' | 'row' ]); 
  * 一定要对 $result === false 做判断，因为 false 的同时也会断开数据库连接。
  */
 class SimpleMysql{
@@ -28,7 +31,7 @@ class SimpleMysql{
      */
     private function __construct($dbHost, $dbUser, $dbPassword, $dbName, $dbPort, $dbCharset){
         try {
-            $this->mysqli = new mysqli($dbHost, $dbUser, $dbPassword, $dbName, $dbPort);
+            $this->mysqli = new \mysqli($dbHost, $dbUser, $dbPassword, $dbName, $dbPort);
             $this->mysqli->set_charset($dbCharset);
         } catch (Throwable $e) {
             $this->outputError($e->getMessage());
@@ -49,7 +52,7 @@ class SimpleMysql{
      * @param  string 字符集
      * @return object DB类的实例
      */
-    public static function getInstance($dbHost = 'localhost', $dbUser = 'root',$dbPassword = '', $dbName = 'info', int $dbPort = 3306, $dbCharset = 'utf8'){
+    public static function getInstance($dbHost = 'localhost', $dbUser = 'root',$dbPassword = '', $dbName = 'test', $dbPort = 3306, $dbCharset = 'utf8'){
         if (!(self::$_instance instanceof self)) {
             self::$_instance = new self($dbHost, $dbUser, $dbPassword, $dbName, $dbPort, $dbCharset);
         }
