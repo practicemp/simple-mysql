@@ -1,0 +1,21 @@
+{
+    "name": "practicemp/simple-mysql",
+    "description": "A simple php mysql library.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "practicemp",
+            "homepage": "https://www.practicemp.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "ext-mysqli": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "PracticeMP\\DB\\": "src/"
+        }
+    }
+}
