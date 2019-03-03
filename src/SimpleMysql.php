@@ -1,4 +1,5 @@
 <?php
+namespace PracticeMP\DB;
 /**
  * 注意：未加入事务功能！！！！！！！！！！
  * mysql数据库类、单例模式
