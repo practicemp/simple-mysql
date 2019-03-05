@@ -76,16 +76,29 @@ class SimpleMysql{
     }
 
     public function query($strSql, array $params = array(), $queryMode = 'all'){
-        if (!in_array(strtolower(substr($strSql,0,6)),array('select','insert','update','delete'))) {
-            $this->message = 'only "select" or "insert" or "update" or "delete" can be used.';
+        $operation = [
+            'select',
+            'insert',
+            'update',
+            'delete',
+            'replace',
+        ];
+        $toggle = false;
+        foreach ($operation as $item) {
+            if (stripos($strSql,$item) === 0) {
+                $toggle = true;
+            }
+        }
+        if (!$toggle) {
+            $this->message = 'only "select" or "insert" or "update" or "delete" or "replace" can be used.';
             return false;
         } elseif (!$this->prepare($strSql)){
             return false;
-        } elseif (strtolower(substr($strSql,0,6)) === 'select') {
+        } elseif (stripos($strSql,'select') === 0) {
             return $this->select($params, $queryMode);
-        } elseif (in_array(strtolower(substr($strSql,0,6)),array('insert','update','delete'),TRUE)) {
-            return $this->insertUpdateDelete($params);
-        }       
+        } else {
+            return $this->insertUpdateDeleteReplace($params);
+        }
     }
 
     private function select($params, $queryMode){
@@ -211,7 +224,7 @@ class SimpleMysql{
      * @param  array
      * @return int or null 
      */
-    private function insertUpdateDelete($params){
+    private function insertUpdateDeleteReplace($params){
         if (!isset($params) || empty($params)) {
             $this->myslqi->close();
             $this->message = 'DB parameters for insert is empty!';
